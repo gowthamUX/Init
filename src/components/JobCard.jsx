@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const JobCard = ({ jobTitle, companyName, salary, address, onPress }) => {
+const JobCard = ({ jobTitle, companyName, salary, address, onPress, onEdit }) => {
   const [pressed, setPressed] = useState(false);
 
   return (
@@ -19,7 +19,9 @@ const JobCard = ({ jobTitle, companyName, salary, address, onPress }) => {
               <Text style={styles.jobTitle}>{jobTitle}</Text>
               <Text style={styles.companyName}>{companyName}</Text>
             </View>
-            <Icon name="bookmark" size={24} color="#9A9A9A" />
+            <TouchableOpacity onPress={onEdit}>
+              <Icon name="edit" size={24} color="#007BFF" />
+            </TouchableOpacity>
           </View>
           <View style={styles.footer}>
             <Text style={styles.address}>{address}</Text>
@@ -37,7 +39,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 18,
-    marginBottom: 8,
+    marginTop: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -47,9 +49,8 @@ const styles = StyleSheet.create({
     borderColor: '#D0D0D0',
   },
   cardPressed: {
-    // Change opacity when pressed
     borderColor: 'blue',
-    backgroundColor: 'grey' // Change border color to indicate press
+    backgroundColor: 'grey',
   },
   header: {
     flexDirection: 'row',

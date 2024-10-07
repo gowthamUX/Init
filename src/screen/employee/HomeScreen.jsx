@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import JobCard from '../../components/JobCard';
 import { Searchbar } from 'react-native-paper';
@@ -81,43 +82,47 @@ const EmployeeHomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.welcomeSection}>
-        <Text style={styles.welcomeText}>Welcome, {user.name}!</Text>
-        <Image source={user.imageUrl} style={styles.userImage} />
-      </View>
-      <View style={styles.applicationsSection}>
-        <Text style={styles.applicationsHeader}>Recent Applications</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeText}>Welcome, {user.name}!</Text>
+          <Image source={user.imageUrl} style={styles.userImage} />
+        </View>
+        <View style={styles.applicationsSection}>
+          <Text style={styles.applicationsHeader}>Recent Applications</Text>
 
-        <Searchbar
-          placeholder="Search"
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          style={styles.Searchbar}
-        />
+          <Searchbar
+            placeholder="Search"
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            style={styles.Searchbar}
+          />
 
-        <FlatList
-          data={filterApplications()}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <JobCard
-              job={item}
-              onPress={() => handleCardPress(item)}
-              jobTitle={item.jobTitle}
-              companyName={item.companyName}
-              salary={item.salary}
-              address={item.address}
+          <FlatList
+            data={filterApplications()}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <JobCard
+                job={item}
+                onPress={() => handleCardPress(item)}
+                jobTitle={item.jobTitle}
+                companyName={item.companyName}
+                salary={item.salary}
+                address={item.address}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
+          />
+
+          {selectedJob && (
+            <JobDetailsModal
+              visible={modalVisible}
+              job={selectedJob}
+              onClose={closeModal}
             />
           )}
-        />
-
-        {selectedJob && (
-          <JobDetailsModal
-            visible={modalVisible}
-            job={selectedJob}
-            onClose={closeModal}
-          />
-        )}
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -126,7 +131,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  scrollContainer: {
     padding: 16,
+    flexGrow: 1, // Ensure content stretches to fit
   },
   welcomeSection: {
     alignItems: 'center',
@@ -156,6 +164,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
     width: '100%',
+  },
+  listContent: {
+    paddingBottom: 100, // Add padding if necessary for scroll
   },
 });
 
