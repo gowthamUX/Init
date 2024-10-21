@@ -4,13 +4,12 @@ import {
   Text,
   TouchableOpacity,
   ToastAndroid,
-  Image,
   TextInput,
   StyleSheet,
+  Linking, // Import Linking
 } from 'react-native';
 import Ionic from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { launchImageLibrary } from 'react-native-image-picker';
 
 const ProfileScreen = ({ route, navigation }) => {
   const [name, setName] = useState('gowtham');
@@ -22,33 +21,28 @@ const ProfileScreen = ({ route, navigation }) => {
   };
 
   const handleLogout = async () => {
-  try {
-    // Remove the token from storage
-    await AsyncStorage.removeItem('userToken');
-    // Navigate to login screen after logout
-    navigation.navigate('Login');
-  } catch (error) {
-    //Alert.alert('Error', 'Failed to log out');
-    //console.error(error);
-  }
-};
+    try {
+      await AsyncStorage.removeItem('userToken');
+      navigation.navigate('Login');
+    } catch (error) {
+      // Handle logout error
+    }
+  };
 
-  const handleChangeProfilePhoto = () => {
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        const source = { uri: response.assets[0].uri };
-        setProfileImage(source); // Update the profile image
-      }
-    });
+  const contactUs = () => {
+    const phoneNumber = '1234567890'; // Replace with your number
+    const message = 'Hello, I would like to get in touch.'; // Customize your message
+    const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(url);
+        } else {
+          ToastAndroid.show('WhatsApp is not installed!', ToastAndroid.SHORT);
+        }
+      })
+      .catch((err) => console.error('An error occurred', err));
   };
 
   return (
@@ -67,22 +61,20 @@ const ProfileScreen = ({ route, navigation }) => {
           <Ionic name="checkmark" style={[styles.icon, styles.checkmarkIcon]} />
         </TouchableOpacity>
       </View>
-      <View style={styles.profilePhotoContainer}>
-        <TouchableOpacity onPress={handleChangeProfilePhoto}>
-          <Image
-            source={profileImage}
-            style={styles.profileImage}
-          />
-          <Text style={styles.changePhotoText}>
-            Change profile photo
-          </Text>
-        </TouchableOpacity>
-      </View>
+  
       <View style={styles.formContainer}>
         {renderTextInput('Name', name, setName)}
         {renderTextInput('Username', accountName, setAccountName)}
         {renderTextInput('Email', '', () => {})}
         {renderTextInput('Mobile Number', '', () => {})}
+      </View>
+
+      {/* Contact Us Section */}
+      <View style={styles.contactUsContainer}>
+        <Text style={styles.contactUsHeading}>Contact Us</Text>
+        <TouchableOpacity style={styles.whatsappContainer} onPress={contactUs}>
+          <Ionic name="logo-whatsapp" style={styles.whatsappIcon} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -121,20 +113,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  profilePhotoContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    marginLeft: 20,
-    borderRadius: 100,
-  },
-  changePhotoText: {
-    marginTop: 30,
-    color: '#3493D9',
-  },
   formContainer: {
     padding: 10,
   },
@@ -148,6 +126,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderBottomWidth: 1,
     borderColor: '#CDCDCD',
+  },
+  contactUsContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  contactUsHeading: {
+    marginTop: 100,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  whatsappContainer: {
+    alignItems: 'center',
+    padding: 10,
+  },
+  whatsappIcon: {
+    fontSize: 40,
+    color: '#25D366', // WhatsApp green
   },
 });
 

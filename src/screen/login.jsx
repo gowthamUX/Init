@@ -15,6 +15,7 @@ import {jwtDecode} from 'jwt-decode';
 import {useNavigation} from '@react-navigation/native';
 import config from '../utils/config';
 import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -45,10 +46,28 @@ export default function Login() {
       console.log(decoded);
       if (role === 'Admin') {
         navigation.navigate('AdminScreen');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'AdminScreen' }], // Your home screen
+          })
+        );
       } else if (role === 'employee') {
         navigation.navigate('MainScreen');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainScreen' }], // Your home screen
+          })
+        );
       } else if (role === 'employer') {
         navigation.navigate('MainScreen');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'MainScreen' }], // Your home screen
+          })
+        );
       } else {
         Alert.alert('Error', 'Invalid role.');
       }
